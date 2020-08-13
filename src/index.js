@@ -1,17 +1,45 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import ReCAPTCHA from "react-google-recaptcha";
+
+function onChange(token) {
+  console.log("Captcha value:", token);
+  console.log("ON CHANGE");
+  try {
+    window.ReCaptchaFlutterChannelChange.postMessage(token);
+  } catch (e) {
+    console.log("Something wrong...");
+  }
+}
+
+function onExpired(){
+  console.log("ON EXPIRED");
+  try {
+    window.ReCaptchaFlutterChannelExpired.postMessage("expired");
+  } catch (e) {
+    console.log("Something wrong reset...");
+  }
+}
+
+function onErrored(){
+  console.log("ON ERROR");
+  try {
+    window.ReCaptchaFlutterChannelError.postMessage("error");
+  } catch (e) {
+    console.log("Something wrong reset...");
+  }
+}
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <ReCAPTCHA
+      sitekey="API_KEY"
+      onChange={onChange}
+      onErrored={onErrored}
+      onExpired={onExpired}
+      hl="pt-BR"
+    />
   </React.StrictMode>,
   document.getElementById('root')
 );
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
